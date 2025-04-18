@@ -20,5 +20,6 @@ app.include_router(todo_router)
 
 @app.on_event("startup")
 async def startup():
-    print('cjcjcjcjcj')
+    print('Приложение запускается...')
     await init_db(engine)
+    print('База данных инициализирована.')
