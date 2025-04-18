@@ -26,6 +26,28 @@ async def get_todos(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {e}")
 
+@todo_router.get("/completed", response_model=list[ToDoFromDB])
+async def get_all_completed_todos(session: AsyncSession = Depends(get_session)):
+    try:
+        query = select(ToDo).where(ToDo.completed == True)
+        result = await session.execute(query)
+        todos = result.scalars().all()
+        return list(todos)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {e}")
+
+@todo_router.get("/active", response_model=list[ToDoFromDB])
+async def get_all_active_todos(session: AsyncSession = Depends(get_session)):
+    try:
+        query = select(ToDo).where(ToDo.completed == False)
+        result = await session.execute(query)
+        todos = result.scalars().all()
+        return list(todos)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {e}")
+
 @todo_router.get("/{todo_id}", response_model=ToDoFromDB)
 async def get_todo_from_id(
         todo_id: uuid.UUID,
